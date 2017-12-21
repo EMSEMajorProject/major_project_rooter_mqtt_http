@@ -176,9 +176,25 @@ public class RaspberryBroker implements MqttCallback {
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 log(message.toString());
                 CloudMQTT.disconnect();
-                CloudMQTT.publish(topic, message.toString());
-                String[] topics = {"switchTopic", "lumTopic"};
-                CloudMQTT.subscribe(topics);
+                if (topic.equalsIgnoreCase("switchTopic")) {
+                    log("\nReceived a Message!" +
+                            "\n\tTopic:   " + topic +
+                            "\n\tMessage: " + new String(message.getPayload()) +
+                            "\n");
+                    HTTPHandler.switchlight();
+                    CloudMQTT.publish(topic, message.toString());
+                }
+                if(topic.equalsIgnoreCase("lumTopic")) {
+                    log("\nReceived a Message!" +
+                            "\n\tTopic:   " + topic +
+                            "\n\tMessage: " + new String(message.getPayload()) +
+                            "\n");
+                    Util.hue_value = Long.parseLong(message.toString())*65536/1024;
+                    HTTPHandler.setColor();
+                    CloudMQTT.publish(topic, Util.hue_value.toString());
+                }
+
+                CloudMQTT.subscribe(Util.topics);
             }
 
             @Override
