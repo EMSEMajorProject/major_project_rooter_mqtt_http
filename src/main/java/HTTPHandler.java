@@ -87,13 +87,20 @@ public class HTTPHandler {
     }
 
     public static void switchlight() {
-        String url = "http://192.168.1.21/";
-        String httpResponse = HTTPHandler.httpGetLightStatus(url+"/api/yND1D9uLGflpK271kqs5qmSiRzgnca-UGa8G-8Ab/lights/10");
+        String httpResponse = HTTPHandler.httpGetLightStatus(Util.api+"/lights/10");
         if (httpResponse.equalsIgnoreCase("true")) {
-            HTTPHandler.httpPut(url+"/api/yND1D9uLGflpK271kqs5qmSiRzgnca-UGa8G-8Ab/lights/10/state","{\"on\":false}");
+            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":false,\"bri\":254,\"hue\":"+Util.hue_value+"}");
         } else {
-            HTTPHandler.httpPut(url+"/api/yND1D9uLGflpK271kqs5qmSiRzgnca-UGa8G-8Ab/lights/10/state","{\"on\":true}");
+            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":true,\"bri\":254,\"hue\":"+Util.hue_value+"}");
         }
     }
 
+    public static void setColor() {
+        String httpResponse = HTTPHandler.httpGetLightStatus(Util.api+"/lights/10");
+        if (httpResponse.equalsIgnoreCase("false")) {
+            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":false,\"bri\":254,\"hue\":"+Util.hue_value+"}");
+        } else {
+            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":true,\"bri\":254,\"hue\":"+Util.hue_value+"}");
+        }
+    }
 }
