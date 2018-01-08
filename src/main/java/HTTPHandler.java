@@ -89,18 +89,42 @@ public class HTTPHandler {
     public static void switchlight() {
         String httpResponse = HTTPHandler.httpGetLightStatus(Util.api+"/lights/10");
         if (httpResponse.equalsIgnoreCase("true")) {
-            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":false,\"bri\":254,\"hue\":"+Util.hue_value+"}");
+            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":false}");
         } else {
-            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":true,\"bri\":254,\"hue\":"+Util.hue_value+"}");
+            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":true}");
         }
     }
 
     public static void setColor() {
-        String httpResponse = HTTPHandler.httpGetLightStatus(Util.api+"/lights/10");
-        if (httpResponse.equalsIgnoreCase("false")) {
-            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":false,\"bri\":254,\"hue\":"+Util.hue_value+"}");
-        } else {
-            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":true,\"bri\":254,\"hue\":"+Util.hue_value+"}");
+        HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"bri\":"+Util.bri_value+",\"hue\":"+Util.hue_value+",\"sat\":"+Util.sat_value+"}");
+    }
+
+    public static void initColor() {
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpGet request = new HttpGet(Util.api + "/lights/10");
+            request.addHeader("content-type", "application/json");
+            HttpResponse result = httpClient.execute(request);
+            result.toString();
+
+            String json = EntityUtils.toString(result.getEntity(), "UTF-8");
+            try {
+                JSONParser parser = new JSONParser();
+                Object resultObject = parser.parse(json);
+                JSONObject obj = (JSONObject) resultObject;
+                JSONObject state = (JSONObject) obj.get("state");
+                Util.hue_value = Long.parseLong(state.get("hue").toString());
+                Util.sat_value = Long.parseLong(state.get("sat").toString());
+                Util.bri_value = Long.parseLong(state.get("bri").toString());
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
+
 }
+

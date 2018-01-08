@@ -131,7 +131,9 @@ public class CloudMQTT implements MqttCallback {
      * @throws MqttException
      */
     public static void publish(String topic, String message) throws MqttException {
-
+        if (client.isConnected()){
+            disconnect();
+        }
         byte[] payload = message.getBytes();
         // Connect to the MQTT server
         log("Connecting to "+brokerUrl + " with client ID "+client.getClientId());
@@ -161,6 +163,9 @@ public class CloudMQTT implements MqttCallback {
      */
     public static void subscribe(String[] topics) throws MqttException {
 
+        if (client.isConnected()){
+            client.disconnect();
+        }
         // Connect to the MQTT server
         client.connect(conOpt);
         log("Connected to "+brokerUrl+" with client ID "+client.getClientId());
@@ -180,7 +185,22 @@ public class CloudMQTT implements MqttCallback {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                this.messageArrived(topic, message);
+                log("\nReceived a Message!" +
+                        "\n\tTopic:   " + topic +
+                        "\n\tMessage: " + new String(message.getPayload()) +
+                        "\n");
+                if (topic.equalsIgnoreCase("switchTopic")) {
+                    HTTPHandler.switchlight();
+                }else{
+                    if (topic.equalsIgnoreCase("lumTopic")){
+                        Util.hue_value = Long.parseLong(message.toString());
+                    }else if (topic.equalsIgnoreCase("satTopic")){
+                        Util.sat_value = Long.parseLong(message.toString());
+                    }else if (topic.equalsIgnoreCase("briTopic")){
+                        Util.bri_value = Long.parseLong(message.toString());
+                    }
+                    HTTPHandler.setColor();
+                }
             }
 
             @Override
