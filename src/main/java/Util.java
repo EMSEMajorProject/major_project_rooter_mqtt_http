@@ -5,4 +5,5 @@ public class Util {
     public static Long sat_value;
     public static Long bri_value;
     public static String[] topics = {"switchTopic", "lumTopic", "briTopic", "satTopic"};
+    public static int id_lamp = 16;
 }

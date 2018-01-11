@@ -87,21 +87,21 @@ public class HTTPHandler {
     }
 
     public static void switchlight() {
-        String httpResponse = HTTPHandler.httpGetLightStatus(Util.api+"/lights/10");
+        String httpResponse = HTTPHandler.httpGetLightStatus(Util.api+"/lights/"+Util.id_lamp);
         if (httpResponse.equalsIgnoreCase("true")) {
-            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":false}");
+            HTTPHandler.httpPut(Util.api+"/lights/"+Util.id_lamp+"/state","{\"on\":false}");
         } else {
-            HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"on\":true}");
+            HTTPHandler.httpPut(Util.api+"/lights/"+Util.id_lamp+"/state","{\"on\":true}");
         }
     }
 
     public static void setColor() {
-        HTTPHandler.httpPut(Util.api+"/lights/10/state","{\"bri\":"+Util.bri_value+",\"hue\":"+Util.hue_value+",\"sat\":"+Util.sat_value+"}");
+        HTTPHandler.httpPut(Util.api+"/lights/"+Util.id_lamp+"/state","{\"bri\":"+Util.bri_value+",\"hue\":"+Util.hue_value+",\"sat\":"+Util.sat_value+"}");
     }
 
     public static void initColor() {
         try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-            HttpGet request = new HttpGet(Util.api + "/lights/10");
+            HttpGet request = new HttpGet(Util.api + "/lights/"+Util.id_lamp);
             request.addHeader("content-type", "application/json");
             HttpResponse result = httpClient.execute(request);
             result.toString();

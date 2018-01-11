@@ -185,7 +185,7 @@ public class CloudMQTT implements MqttCallback {
 
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
-                log("\nReceived a Message!" +
+                log("\nReceived a Message from CloudMqtt" +
                         "\n\tTopic:   " + topic +
                         "\n\tMessage: " + new String(message.getPayload()) +
                         "\n");
